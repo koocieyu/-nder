@@ -2,8 +2,10 @@ import Bot from "./Classes/Bot";
 
 require("dotenv").config();
 
-const Under = new Bot({
-  token: process.env.TOKEN
+export const Under = new Bot({
+  token: process.env.TOKEN,
+  prefix: "_ ",
+  id: process.env.CLIENT_ID
 });
 
 Under.start();

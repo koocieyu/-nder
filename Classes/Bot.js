@@ -9,10 +9,15 @@ export default class {
     if (!options) throw new Error("No configuration provided for the bot!");
     if (!options.token)
       throw new Error("No token was provided for the bot to start!");
+    if (!options.prefix) throw new Error("No prefix was provided for the bot!");
   }
 
   Client() {
     return this.BotClient;
+  }
+
+  getPrefix() {
+    return this.options.prefix;
   }
 
   start() {
