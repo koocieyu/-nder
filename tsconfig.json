@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "esnext",
+    "outDir": "transpiled",
+    "esModuleInterop": true
+  },
+  "files": ["./node_modules/discord.js/typings/index.d.ts"],
+  "include": ["dev/**/*.ts"],
+  "exclude": ["node_modules"]
+}

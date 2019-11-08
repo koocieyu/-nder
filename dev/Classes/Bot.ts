@@ -1,34 +1,31 @@
-import Discord from "discord.js";
+import { Client } from "discord.js";
 import filesystem from "fs";
 
 export default class {
-  constructor(options) {
+  options: optionsI;
+  botClient: Client;
+  constructor(options: optionsI) {
     this.options = options;
-    this.BotClient = new Discord.Client();
-
-    if (!options) throw new Error("No configuration provided for the bot!");
-    if (!options.token)
-      throw new Error("No token was provided for the bot to start!");
-    if (!options.prefix) throw new Error("No prefix was provided for the bot!");
+    this.botClient = new Client();
   }
 
-  Client() {
-    return this.BotClient;
+  Client(): Client {
+    return this.botClient;
   }
 
-  getPrefix() {
+  getPrefix(): string {
     return this.options.prefix;
   }
 
-  start() {
+  start(): void {
     loadEvents(this.Client());
     this.Client().login(this.options.token);
   }
 }
 
-function loadEvents(Client) {
-  filesystem.readdir("./Events/", (error, eventFiles) => {
-    if (error) throw new Error(error);
+function loadEvents(Client: Client) {
+  filesystem.readdir("./transpiled/Events/", (error, eventFiles) => {
+    if (error) throw console.log(error);
     if (eventFiles.length == 0)
       throw new Error("There are no events in the events folder!");
 
@@ -43,4 +40,10 @@ function loadEvents(Client) {
       Client.on(eventName, (...args) => event.runEvent(Client, ...args));
     });
   });
+}
+
+interface optionsI {
+  prefix: string;
+  token: string;
+  id: string;
 }

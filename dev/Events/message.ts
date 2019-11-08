@@ -1,12 +1,9 @@
-import Discord from "discord.js";
-import { Under } from "../main.js";
+import Discord, { Client, Message } from "discord.js";
+import { Under } from "../main";
 import { db as commands } from "../Databases/Commands";
+import { db as botdb } from "../Databases/Cooldowns";
 
-/**
- * @param {Discord.Client} Client
- * @param {Discord.Message} message
- */
-export function runEvent(Client, message) {
+export function runEvent(Client: Client, message: Message) {
   let msgContent = message.content;
   const botPrefix = Under.getPrefix();
   const regexPrefix = new RegExp(
@@ -18,21 +15,25 @@ export function runEvent(Client, message) {
   if (!foundPrefix) return;
 
   msgContent = msgContent.split(foundPrefix[0]).join("");
-  console.log(msgContent);
 
   let args = msgContent.split(/ +/);
   let command = args.shift().toLowerCase();
-  console.log(command);
 
   let foundCommand = false;
 
   commands.get("commands").forEach(cmd => {
     if (cmd.aliases.includes(command)) {
-      cmd.run(Client, message, args);
-
       foundCommand = true;
 
       //TODO: Handle options
+
+      if (cmd.cooldown) {
+        let getCooldown = botdb
+          .prepare(`SELECT ${cmd.name} from cooldowns where id=?`)
+          .get(message.author.id);
+
+        if (!getCooldown) cmd.run(Client, message, args);
+      }
     }
   });
 
