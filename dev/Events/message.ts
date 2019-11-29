@@ -1,7 +1,10 @@
-import Discord, { Client, Message } from "discord.js";
+import Discord, { Client, Message, RichEmbed } from "discord.js";
 import { Under } from "../main";
 import { db as commands } from "../Databases/Commands";
 import { db as botdb } from "../Databases/Cooldowns";
+import moment from "moment";
+
+require("dotenv").config();
 
 export function runEvent(Client: Client, message: Message) {
   let msgContent = message.content;
@@ -29,11 +32,43 @@ export function runEvent(Client: Client, message: Message) {
 
       if (cmd.cooldown) {
         let getCooldown = botdb
-          .prepare(`SELECT ${cmd.name} from cooldowns where id=?`)
-          .get(message.author.id);
+          .prepare(
+            `SELECT ${cmd.name} from cooldowns where id=${message.author.id}`
+          )
+          .get();
 
-        if (!getCooldown) cmd.run(Client, message, args);
+        if (getCooldown) {
+          if (getCooldown[cmd.name]) {
+            if (
+              moment().diff(getCooldown[cmd.name], "seconds") < cmd.cooldown
+            ) {
+              return message.channel.send({
+                embed: new RichEmbed()
+                  .setFooter("This command is on cooldown!")
+                  .setTitle("Command is on cooldown!")
+              });
+            }
+          }
+        } else {
+          let insertUser = botdb.prepare(
+            "INSERT into cooldowns (id) VALUES (?)"
+          );
+
+          insertUser.run(message.author.id);
+        }
       }
+
+      if (cmd.ownerOnly && message.author.id != process.env.OWNER_ID)
+        return message.channel.send({
+          embed: new RichEmbed()
+            .setColor("#11f7a4")
+            .setFooter(
+              "This command is available only for the owner of this bot."
+            )
+            .setTitle("Owner only command!")
+        });
+
+      cmd.run(Client, message, args);
     }
   });
 

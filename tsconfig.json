@@ -3,9 +3,13 @@
     "target": "es6",
     "module": "esnext",
     "outDir": "transpiled",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "moduleResolution": "node"
   },
-  "files": ["./node_modules/discord.js/typings/index.d.ts"],
+  "files": [
+    "./node_modules/discord.js/typings/index.d.ts",
+    "./node_modules/moment/moment.d.ts"
+  ],
   "include": ["dev/**/*.ts"],
   "exclude": ["node_modules"]
 }

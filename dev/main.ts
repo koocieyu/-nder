@@ -1,4 +1,4 @@
-import Bot from "./Classes/Bot";
+import Bot from "./Utils/Bot";
 
 require("dotenv").config();
 

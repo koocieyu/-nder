@@ -1,0 +1,9 @@
+{
+  "apps": [
+    {
+      "name": "underbot",
+      "script": "npm",
+      "args": "start"
+    }
+  ]
+}

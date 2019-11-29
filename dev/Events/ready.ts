@@ -2,6 +2,7 @@ import Discord from "discord.js";
 import filesystem from "fs";
 
 export function runEvent(Client) {
+  console.log("Ready");
   filesystem.readdir("./transpiled/Databases/", (error, files) => {
     if (error) throw console.log(error);
 
